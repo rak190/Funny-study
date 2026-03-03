@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>តើអ្នកសិក្សាឥឡូវនេះទេ? 📚</title>
+
+  <style>
+    :root{
+      --card: rgba(255,255,255,0.14);
+      --border: rgba(255,255,255,0.22);
+      --shadow: rgba(0,0,0,0.35);
+      --text: #f5fbff;
+      --muted: rgba(245,251,255,0.75);
+    }
+
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Khmer", "Khmer OS", sans-serif;
+      background: radial-gradient(circle at top, #2b4a7a, #0b0f18);
+    }
+
+    /* Floating icons */
+    .float{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .bubble{
+      position:absolute;
+      font-size: 22px;
+      opacity: 0.8;
+      animation: rise linear infinite;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+    }
+    @keyframes rise{
+      from { transform: translateY(110vh) rotate(0deg); opacity:0.0; }
+      10% { opacity:0.85; }
+      to { transform: translateY(-20vh) rotate(360deg); opacity:0.0; }
+    }
+
+    .card{
+      width:min(820px, 92vw);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 25px 70px var(--shadow);
+      padding: 26px 22px;
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.18);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    h1{
+      margin: 14px 0 6px 0;
+      font-size: clamp(26px, 3.5vw, 40px);
+      line-height: 1.2;
+    }
+    p{
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: clamp(14px, 2.2vw, 16px);
+      line-height: 1.6;
+    }
+
+    .stage{
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(0,0,0,0.22);
+      border: 1px dashed rgba(255,255,255,0.25);
+      min-height: 220px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .question{
+      text-align:center;
+      font-size: clamp(18px, 2.6vw, 22px);
+      font-weight: 800;
+      margin: 10px 0 6px 0;
+    }
+    .sub{
+      text-align:center;
+      margin: 0 0 14px 0;
+      color: rgba(245,251,255,0.8);
+      font-size: 14px;
+    }
+
+    .buttons{
+      position: relative;
+      height: 140px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      border:none;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, filter .12s ease;
+      box-shadow: 0 18px 35px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.18);
+      position: relative;
+    }
+    button:active{ transform: scale(0.98); }
+
+    .yes{
+      background: linear-gradient(135deg, rgba(86,255,170,0.95), rgba(52,184,255,0.95));
+      color: #072017;
+    }
+    .no{
+      background: rgba(255, 90, 90, 0.85);
+      color: #fff;
+    }
+
+    .tipRow{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items:center;
+      color: rgba(245,251,255,0.82);
+      font-size: 13px;
+    }
+
+    .smallBtn{
+      background: rgba(255,255,255,0.10);
+      color: rgba(245,251,255,0.95);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 700;
+      box-shadow: none;
+    }
+    .smallBtn:hover{ filter: brightness(1.08); }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(245,251,255,0.95);
+      padding: 10px 14px;
+      border-radius: 14px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      font-size: 14px;
+      max-width: min(92vw, 740px);
+      text-align:center;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* Result overlay */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(43,74,122,0.92), rgba(11,15,24,0.96));
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+    }
+    .overlay.show{ display:flex; }
+
+    .resultCard{
+      width:min(860px, 94vw);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 22px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+
+    .resultTitle{
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 900;
+      margin: 0 0 8px 0;
+      text-align:center;
+    }
+    .resultText{
+      color: rgba(245,251,255,0.85);
+      text-align:center;
+      line-height:1.7;
+      margin: 0 0 14px 0;
+    }
+
+    .promiseBox{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    textarea{
+      width:100%;
+      min-height: 110px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.28);
+      color: rgba(245,251,255,0.95);
+      padding: 12px 12px;
+      outline:none;
+      font-size: 14px;
+      line-height:1.6;
+    }
+    textarea::placeholder{
+      color: rgba(245,251,255,0.55);
+    }
+
+    .actionRow{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.22);
+      color: rgba(245,251,255,0.92);
+      font-weight: 800;
+      cursor:pointer;
+    }
+    .pill:hover{ filter: brightness(1.08); }
+
+    .mini{
+      font-size: 12px;
+      opacity: 0.85;
+      text-align:center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating icons layer -->
+  <div class="float" id="float"></div>
+
+  <div class="card">
+    <div class="badge">📚 Challenge សិក្សា 60 វិនាទី</div>
+
+    <h1>តើអ្នកសិក្សាឥឡូវនេះទេ? 🤨</h1>
+    <p>
+      វេបសាយនេះគ្រាន់តែជាឧទាហរណ៍សម្រាប់សិស្ស៖ <b>Text-based</b> គឺបញ្ជារជាអក្សរ (ពាក្យ/កូដ) ហើយ “បន្តិចតែខុស” ក៏អាចបរាជ័យបាន 😄
+    </p>
+
+    <div class="stage" id="stage">
+      <div class="question" id="qText">ជ្រើសរើសមួយ 👇</div>
+      <div class="sub" id="subText">ព្យាយាមចុច “អត់សិក្សា” មើល 😏</div>
+
+      <div class="buttons">
+        <button class="yes" id="yesBtn">សិក្សាឥឡូវនេះ ✅</button>
+        <button class="no" id="noBtn">អត់សិក្សា ❌</button>
+      </div>
+
+      <div class="tipRow">
+        <div>🎯 គន្លឹះ៖ ចុច “អត់សិក្សា” → វានឹង “រត់គេច” ដូចប៊ូតុង NO ក្នុង Valentine 😆</div>
+        <div style="display:flex; gap:10px;">
+          <button class="smallBtn" id="soundBtn">🔊 សម្លេង: ON</button>
+          <button class="smallBtn" id="resetBtn">🔄 Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Result overlay -->
+  <div class="overlay" id="overlay">
+    <div class="resultCard">
+      <div class="resultTitle">🎉 យើងសិក្សា! យើងឈ្នះ! 🏆</div>
+      <div class="resultText" id="resultText">
+        អ្នកបានជ្រើស “សិក្សាឥឡូវនេះ” ✅<br/>
+        សូមសរសេរ “សេចក្តីសន្យា” តូចមួយសម្រាប់ខ្លួនឯង (ឬសម្រាប់គ្រូ) 😄
+      </div>
+
+      <div class="promiseBox">
+        <textarea id="promise" placeholder="ឧ៖ ខ្ញុំនឹងអានមេរៀន 15 នាទី និងធ្វើលំហាត់ 5 សំណួរ មុនលេងទូរស័ព្ទ។"></textarea>
+      </div>
+
+      <div class="actionRow">
+        <div class="pill" id="copyBtn">📋 ចម្លងសេចក្តីសន្យា</div>
+        <div class="pill" id="backBtn">⬅️ ត្រលប់ទៅមុខដើម</div>
+      </div>
+
+      <div class="mini">Tip សម្រាប់គ្រូ៖ អោយសិស្សសរសេរសេចក្តីសន្យា 1 ប្រយោគ → ចម្លង → ផ្ញើក្នុង Group chat</div>
+    </div>
+  </div>
+
+<script>
+  // ===== Utilities =====
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const stage  = document.getElementById("stage");
+  const toast  = document.getElementById("toast");
+  const overlay = document.getElementById("overlay");
+  const soundBtn = document.getElementById("soundBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const qText = document.getElementById("qText");
+  const subText = document.getElementById("subText");
+
+  const promise = document.getElementById("promise");
+  const copyBtn = document.getElementById("copyBtn");
+  const backBtn = document.getElementById("backBtn");
+
+  let soundOn = true;
+  let yesScale = 1;
+  let tries = 0;
+
+  const messages = [
+    "តើអ្នកប្រាកដទេ? 🤔",
+    "ប្រាកដមែនទេ? 😏",
+    "ឱកាសចុងក្រោយ! 😆",
+    "អត់អាចគេចបានទេ 😈",
+    "គ្រូកំពុងមើល! 👀",
+    "សិក្សា 10 នាទី ក៏ល្អហើយ! ⏳",
+    "បើមិនសិក្សា… ក៏ចាញ់ Quiz 😭"
+  ];
+
+  function showToast(text){
+    toast.textContent = text;
+    toast.classList.add("show");
+    setTimeout(()=> toast.classList.remove("show"), 1200);
+  }
+
+  // ===== Funny sound (WebAudio) =====
+  function playHehe(){
+    if(!soundOn) return;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+
+    // 3 short beeps like "hehe nope!"
+    const now = ctx.currentTime;
+
+    function beep(t, freq){
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "square";
+      o.frequency.value = freq;
+
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+
+      o.connect(g);
+      g.connect(ctx.destination);
+
+      o.start(t);
+      o.stop(t + 0.13);
+    }
+
+    beep(now + 0.00, 640);
+    beep(now + 0.16, 520);
+    beep(now + 0.32, 700);
+
+    setTimeout(()=> ctx.close(), 700);
+  }
+
+  // ===== NO button runs away =====
+  function moveNoButton(){
+    const stageRect = stage.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    // limit area inside stage
+    const padding = 18;
+    const maxX = stageRect.width - btnRect.width - padding;
+    const maxY = stageRect.height - btnRect.height - padding;
+
+    // random positions
+    const x = Math.max(padding, Math.random() * maxX);
+    const y = Math.max(padding, Math.random() * maxY);
+
+    // convert to stage relative positioning
+    noBtn.style.position = "absolute";
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+  }
+
+  function levelUpYesButton(){
+    yesScale = Math.min(2.25, yesScale + 0.12);
+    yesBtn.style.transform = `scale(${yesScale})`;
+  }
+
+  function updateTexts(){
+    const msg = messages[Math.min(messages.length - 1, tries)];
+    qText.textContent = msg;
+    subText.textContent = "ចុច “សិក្សាឥឡូវនេះ” ម្តងទៅ 😄";
+  }
+
+  // ===== Events =====
+  function handleNo(){
+    tries++;
+    playHehe();
+
+    showToast("ហេហេ! អត់បានទេ 😆");
+    moveNoButton();
+    levelUpYesButton();
+    updateTexts();
+  }
+
+  // Use hover + click so it's hard to press NO
+  noBtn.addEventListener("mouseenter", handleNo);
+  noBtn.addEventListener("click", handleNo);
+
+  yesBtn.addEventListener("click", ()=>{
+    // Show result overlay
+    overlay.classList.add("show");
+    showToast("🎉 សិក្សាចាប់ផ្តើម!");
+  });
+
+  backBtn.addEventListener("click", ()=>{
+    overlay.classList.remove("show");
+  });
+
+  copyBtn.addEventListener("click", async ()=>{
+    const text = promise.value.trim() || "ខ្ញុំនឹងសិក្សា 15 នាទី មុនលេងទូរស័ព្ទ។";
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("📋 ចម្លងរួចរាល់!");
+    }catch(e){
+      // fallback
+      promise.select();
+      document.execCommand("copy");
+      showToast("📋 ចម្លងរួចរាល់!");
+    }
+  });
+
+  soundBtn.addEventListener("click", ()=>{
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊 សម្លេង: ON" : "🔇 សម្លេង: OFF";
+    showToast(soundOn ? "សម្លេងបានបើក" : "សម្លេងបានបិទ");
+  });
+
+  function resetAll(){
+    tries = 0;
+    yesScale = 1;
+    yesBtn.style.transform = "scale(1)";
+    noBtn.style.position = "relative";
+    noBtn.style.left = "auto";
+    noBtn.style.top  = "auto";
+    qText.textContent = "ជ្រើសរើសមួយ 👇";
+    subText.textContent = "ព្យាយាមចុច “អត់សិក្សា” មើល 😏";
+    promise.value = "";
+    overlay.classList.remove("show");
+    showToast("🔄 Reset រួចរាល់!");
+  }
+
+  resetBtn.addEventListener("click", resetAll);
+
+  // ===== Floating icons =====
+  const floatLayer = document.getElementById("float");
+  const icons = ["📚","✏️","🧠","📝","⏳","💡","📖","✅","🎯","🧩"];
+
+  function spawnBubble(){
+    const b = document.createElement("div");
+    b.className = "bubble";
+    b.textContent = icons[Math.floor(Math.random()*icons.length)];
+
+    const left = Math.random() * 100;
+    const duration = 6 + Math.random() * 7;
+    const size = 18 + Math.random() * 18;
+
+    b.style.left = left + "vw";
+    b.style.animationDuration = duration + "s";
+    b.style.fontSize = size + "px";
+    b.style.top = "0";
+
+    floatLayer.appendChild(b);
+    setTimeout(()=> b.remove(), (duration*1000) + 200);
+  }
+
+  setInterval(spawnBubble, 380);
+
+  // initial position
+  setTimeout(()=> {
+    moveNoButton();
+    // put it back centered first then random after a second
+    resetAll();
+  }, 100);
+</script>
+</body>
+</html>

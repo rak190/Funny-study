@@ -7,11 +7,14 @@
 
   <style>
     :root{
-      --card: rgba(255,255,255,0.14);
-      --border: rgba(255,255,255,0.22);
-      --shadow: rgba(0,0,0,0.35);
+      --glass: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.20);
       --text: #f5fbff;
-      --muted: rgba(245,251,255,0.75);
+      --muted: rgba(245,251,255,0.78);
+      --shadow: rgba(0,0,0,0.45);
+      --yes1: rgba(86,255,170,0.95);
+      --yes2: rgba(52,184,255,0.95);
+      --no: rgba(255, 90, 90, 0.86);
     }
 
     body{
@@ -23,38 +26,46 @@
       overflow:hidden;
       color: var(--text);
       font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Khmer", "Khmer OS", sans-serif;
-      background: radial-gradient(circle at top, #2b4a7a, #0b0f18);
+      background: radial-gradient(circle at top, #2a4a78, #0b0f18);
     }
 
-    /* Floating icons */
-    .float{
-      position: fixed;
-      inset: 0;
+    /* Floating study assets */
+    .floatLayer{
+      position:fixed;
+      inset:0;
       pointer-events:none;
       overflow:hidden;
     }
-    .bubble{
+    .floatItem{
       position:absolute;
-      font-size: 22px;
-      opacity: 0.8;
+      opacity:0.85;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
       animation: rise linear infinite;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+      user-select:none;
     }
     @keyframes rise{
-      from { transform: translateY(110vh) rotate(0deg); opacity:0.0; }
-      10% { opacity:0.85; }
-      to { transform: translateY(-20vh) rotate(360deg); opacity:0.0; }
+      from{ transform: translateY(110vh) rotate(0deg); opacity:0; }
+      12%{ opacity:0.9; }
+      to{ transform: translateY(-20vh) rotate(360deg); opacity:0; }
     }
 
     .card{
-      width:min(820px, 92vw);
-      background: var(--card);
+      width:min(950px, 92vw);
+      background: var(--glass);
       border: 1px solid var(--border);
       border-radius: 22px;
-      box-shadow: 0 25px 70px var(--shadow);
-      padding: 26px 22px;
+      box-shadow: 0 28px 90px var(--shadow);
+      padding: 24px 22px;
       backdrop-filter: blur(10px);
-      position: relative;
+      position:relative;
+    }
+
+    .topRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
     }
 
     .badge{
@@ -65,109 +76,127 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.22);
       background: rgba(0,0,0,0.18);
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing: 0.2px;
     }
 
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .miniBtn{
+      cursor:pointer;
+      border:none;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.10);
+      color: rgba(245,251,255,0.92);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-weight: 900;
+      box-shadow:none;
+    }
+    .miniBtn:hover{ filter: brightness(1.08); }
+
     h1{
-      margin: 14px 0 6px 0;
-      font-size: clamp(26px, 3.5vw, 40px);
-      line-height: 1.2;
+      margin: 14px 0 8px 0;
+      font-size: clamp(26px, 3.8vw, 42px);
+      line-height: 1.15;
     }
     p{
       margin: 8px 0;
       color: var(--muted);
-      font-size: clamp(14px, 2.2vw, 16px);
-      line-height: 1.6;
+      font-size: clamp(14px, 2.1vw, 16px);
+      line-height: 1.65;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      margin-top: 16px;
+      align-items: stretch;
+    }
+    @media (max-width: 920px){
+      .layout{ grid-template-columns: 1fr; }
     }
 
     .stage{
-      margin-top: 18px;
       padding: 18px;
       border-radius: 18px;
       background: rgba(0,0,0,0.22);
       border: 1px dashed rgba(255,255,255,0.25);
-      min-height: 220px;
-      position: relative;
+      position:relative;
       overflow:hidden;
+      min-height: 290px;
     }
 
     .question{
       text-align:center;
-      font-size: clamp(18px, 2.6vw, 22px);
-      font-weight: 800;
-      margin: 10px 0 6px 0;
+      font-size: clamp(18px, 2.8vw, 24px);
+      font-weight: 950;
+      margin: 6px 0 6px 0;
     }
     .sub{
       text-align:center;
       margin: 0 0 14px 0;
-      color: rgba(245,251,255,0.8);
+      color: rgba(245,251,255,0.82);
       font-size: 14px;
     }
 
-    .buttons{
-      position: relative;
-      height: 140px;
+    .btnArea{
+      position:relative;
+      height: 160px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap: 14px;
-      flex-wrap: wrap;
+      gap:14px;
+      flex-wrap:wrap;
     }
 
-    button{
+    button.main{
       border:none;
       border-radius: 16px;
       padding: 14px 18px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 950;
       cursor:pointer;
       user-select:none;
       transition: transform .12s ease, filter .12s ease;
       box-shadow: 0 18px 35px rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.18);
       position: relative;
+      will-change: transform;
     }
-    button:active{ transform: scale(0.98); }
+    button.main:active{ transform: scale(0.98); }
 
-    .yes{
-      background: linear-gradient(135deg, rgba(86,255,170,0.95), rgba(52,184,255,0.95));
+    #yesBtn{
+      background: linear-gradient(135deg, var(--yes1), var(--yes2));
       color: #072017;
     }
-    .no{
-      background: rgba(255, 90, 90, 0.85);
+    #noBtn{
+      background: var(--no);
       color: #fff;
     }
 
-    .tipRow{
-      margin-top: 12px;
+    .hintRow{
+      margin-top: 10px;
       display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
       align-items:center;
-      color: rgba(245,251,255,0.82);
+      color: rgba(245,251,255,0.86);
       font-size: 13px;
     }
 
-    .smallBtn{
-      background: rgba(255,255,255,0.10);
-      color: rgba(245,251,255,0.95);
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-weight: 700;
-      box-shadow: none;
-    }
-    .smallBtn:hover{ filter: brightness(1.08); }
-
-    /* Toast */
     .toast{
       position: fixed;
       left: 50%;
       bottom: 18px;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.58);
       border: 1px solid rgba(255,255,255,0.2);
       color: rgba(245,251,255,0.95);
       padding: 10px 14px;
@@ -177,130 +206,194 @@
       pointer-events:none;
       transition: opacity .18s ease, transform .18s ease;
       font-size: 14px;
-      max-width: min(92vw, 740px);
+      max-width: min(92vw, 820px);
       text-align:center;
+      z-index: 9999;
     }
     .toast.show{
       opacity: 1;
       transform: translateX(-50%) translateY(-6px);
     }
 
-    /* Result overlay */
-    .overlay{
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(43,74,122,0.92), rgba(11,15,24,0.96));
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-    }
-    .overlay.show{ display:flex; }
-
-    .resultCard{
-      width:min(860px, 94vw);
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 22px;
-      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
-      padding: 22px;
-      backdrop-filter: blur(10px);
-    }
-
-    .resultTitle{
-      font-size: clamp(22px, 3vw, 32px);
-      font-weight: 900;
-      margin: 0 0 8px 0;
-      text-align:center;
-    }
-    .resultText{
-      color: rgba(245,251,255,0.85);
-      text-align:center;
-      line-height:1.7;
-      margin: 0 0 14px 0;
-    }
-
-    .promiseBox{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    textarea{
-      width:100%;
-      min-height: 110px;
-      resize: vertical;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.28);
-      color: rgba(245,251,255,0.95);
-      padding: 12px 12px;
-      outline:none;
-      font-size: 14px;
-      line-height:1.6;
-    }
-    textarea::placeholder{
-      color: rgba(245,251,255,0.55);
-    }
-
-    .actionRow{
+    /* ===== Owl Tutor Mascot (emoji animation “GIF-like”) ===== */
+    .mascotCard{
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 18px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      min-height: 290px;
       display:flex;
-      gap: 10px;
-      justify-content:center;
-      flex-wrap: wrap;
-      margin-top: 12px;
+      flex-direction:column;
+      justify-content:space-between;
     }
 
-    .pill{
+    .mascotHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .mascotTitle{
+      font-weight: 950;
+      letter-spacing: 0.2px;
+      opacity: 0.95;
+    }
+    .mascotTag{
       display:inline-flex;
       gap:8px;
       align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
+      padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.22);
-      color: rgba(245,251,255,0.92);
-      font-weight: 800;
-      cursor:pointer;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      font-weight: 900;
+      font-size: 13px;
+      opacity:0.95;
     }
-    .pill:hover{ filter: brightness(1.08); }
 
-    .mini{
-      font-size: 12px;
-      opacity: 0.85;
+    .owlStage{
+      margin-top: 12px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.22);
+      min-height: 170px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .owl{
+      font-size: 80px;
+      line-height: 1;
+      user-select:none;
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,0.35));
+      transform-origin: 50% 80%;
+      animation: owlIdle 1.35s ease-in-out infinite;
+    }
+    @keyframes owlIdle{
+      0%,100%{ transform: translateY(0) rotate(-1deg); }
+      50%{ transform: translateY(-6px) rotate(1deg); }
+    }
+    .owl.talk{
+      animation: owlTalk 0.22s ease-in-out infinite;
+    }
+    @keyframes owlTalk{
+      0%,100%{ transform: translateY(0) scale(1.02); }
+      50%{ transform: translateY(-4px) scale(1.06); }
+    }
+    .owl.shock{
+      animation: owlShock 0.12s ease-in-out 8;
+    }
+    @keyframes owlShock{
+      0%,100%{ transform: translateX(0); }
+      25%{ transform: translateX(-3px); }
+      75%{ transform: translateX(3px); }
+    }
+
+    .bubble{
+      position:absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      margin:auto;
+      width: fit-content;
+      max-width: calc(100% - 24px);
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.20);
+      padding: 10px 12px;
+      border-radius: 16px;
+      font-weight: 900;
+      font-size: 13px;
+      color: rgba(245,251,255,0.95);
+      box-shadow: 0 18px 35px rgba(0,0,0,0.28);
       text-align:center;
-      margin-top: 10px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+    }
+    .bubble.show{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mascotFooter{
+      margin-top: 12px;
+      color: rgba(245,251,255,0.85);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .kbd{
+      display:inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.18);
+      font-weight: 950;
+      margin: 2px 4px 2px 0;
     }
   </style>
 </head>
 
 <body>
-  <!-- Floating icons layer -->
-  <div class="float" id="float"></div>
+  <div class="floatLayer" id="floatLayer"></div>
 
   <div class="card">
-    <div class="badge">📚 Challenge សិក្សា 60 វិនាទី</div>
+    <div class="topRow">
+      <div class="badge">📚 Study Challenge Mode</div>
+      <div class="controls">
+        <button class="miniBtn" id="musicBtn">🎵 តន្ត្រី: ON</button>
+        <button class="miniBtn" id="soundBtn">🔊 សម្លេង: ON</button>
+        <button class="miniBtn" id="resetBtn">🔄 Reset</button>
+      </div>
+    </div>
 
     <h1>តើអ្នកសិក្សាឥឡូវនេះទេ? 🤨</h1>
     <p>
-      វេបសាយនេះគ្រាន់តែជាឧទាហរណ៍សម្រាប់សិស្ស៖ <b>Text-based</b> គឺបញ្ជារជាអក្សរ (ពាក្យ/កូដ) ហើយ “បន្តិចតែខុស” ក៏អាចបរាជ័យបាន 😄
+      បែបដូច Valentine project: <b>NO</b> រត់គេច 😆, <b>YES</b> ធំឡើងៗ ✅
+      ហើយមាន “គ្រូព្រាបព្រឹក” 🧑‍🎓🦉 ណែនាំសិស្ស!
     </p>
 
-    <div class="stage" id="stage">
-      <div class="question" id="qText">ជ្រើសរើសមួយ 👇</div>
-      <div class="sub" id="subText">ព្យាយាមចុច “អត់សិក្សា” មើល 😏</div>
+    <div class="layout">
+      <!-- Left: Main interaction -->
+      <div class="stage" id="stage">
+        <div class="question" id="qText">ជ្រើសរើសមួយ 👇</div>
+        <div class="sub" id="subText">ព្យាយាមចុច “អត់សិក្សា” មើល 😏</div>
 
-      <div class="buttons">
-        <button class="yes" id="yesBtn">សិក្សាឥឡូវនេះ ✅</button>
-        <button class="no" id="noBtn">អត់សិក្សា ❌</button>
+        <div class="btnArea">
+          <button class="main" id="yesBtn">សិក្សាឥឡូវនេះ ✅</button>
+          <button class="main" id="noBtn">អត់សិក្សា ❌</button>
+        </div>
+
+        <div class="hintRow">
+          <div>🎯 ចុច NO → YES ធំឡើងៗ (motivation) 😆</div>
+          <div>📌 ចុច YES → ទៅ Study Letter</div>
+        </div>
       </div>
 
-      <div class="tipRow">
-        <div>🎯 គន្លឹះ៖ ចុច “អត់សិក្សា” → វានឹង “រត់គេច” ដូចប៊ូតុង NO ក្នុង Valentine 😆</div>
-        <div style="display:flex; gap:10px;">
-          <button class="smallBtn" id="soundBtn">🔊 សម្លេង: ON</button>
-          <button class="smallBtn" id="resetBtn">🔄 Reset</button>
+      <!-- Right: Mascot -->
+      <div class="mascotCard">
+        <div class="mascotHeader">
+          <div class="mascotTitle">🧑‍🎓🦉 Owl Tutor</div>
+          <div class="mascotTag">✅ Study Coach</div>
+        </div>
+
+        <div class="owlStage">
+          <div class="bubble" id="bubble">សួស្តី! ចុច “សិក្សាឥឡូវនេះ” ទៅ 😄</div>
+          <div class="owl" id="owl">🧑‍🎓🦉</div>
+        </div>
+
+        <div class="mascotFooter">
+          <div>🧠 Mascot នឹងប្តូរអារម្មណ៍តាមសកម្មភាព:</div>
+          <div>
+            <span class="kbd">NO</span> → “ហេហេ!” 😆 |
+            <span class="kbd">YES</span> → “ពូកែមែន!” 🏆
+          </div>
         </div>
       </div>
     </div>
@@ -308,48 +401,41 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- Result overlay -->
-  <div class="overlay" id="overlay">
-    <div class="resultCard">
-      <div class="resultTitle">🎉 យើងសិក្សា! យើងឈ្នះ! 🏆</div>
-      <div class="resultText" id="resultText">
-        អ្នកបានជ្រើស “សិក្សាឥឡូវនេះ” ✅<br/>
-        សូមសរសេរ “សេចក្តីសន្យា” តូចមួយសម្រាប់ខ្លួនឯង (ឬសម្រាប់គ្រូ) 😄
-      </div>
-
-      <div class="promiseBox">
-        <textarea id="promise" placeholder="ឧ៖ ខ្ញុំនឹងអានមេរៀន 15 នាទី និងធ្វើលំហាត់ 5 សំណួរ មុនលេងទូរស័ព្ទ។"></textarea>
-      </div>
-
-      <div class="actionRow">
-        <div class="pill" id="copyBtn">📋 ចម្លងសេចក្តីសន្យា</div>
-        <div class="pill" id="backBtn">⬅️ ត្រលប់ទៅមុខដើម</div>
-      </div>
-
-      <div class="mini">Tip សម្រាប់គ្រូ៖ អោយសិស្សសរសេរសេចក្តីសន្យា 1 ប្រយោគ → ចម្លង → ផ្ញើក្នុង Group chat</div>
-    </div>
-  </div>
+  <!-- Background music (optional): put study-music.mp3 in same folder -->
+  <audio id="bgm" loop autoplay>
+    <source src="study-music.mp3" type="audio/mpeg">
+  </audio>
 
 <script>
-  // ===== Utilities =====
+  // ===== Elements =====
+  const stage = document.getElementById("stage");
   const yesBtn = document.getElementById("yesBtn");
   const noBtn  = document.getElementById("noBtn");
-  const stage  = document.getElementById("stage");
-  const toast  = document.getElementById("toast");
-  const overlay = document.getElementById("overlay");
+  const qText = document.getElementById("qText");
+  const subText = document.getElementById("subText");
+  const toast = document.getElementById("toast");
+
+  const musicBtn = document.getElementById("musicBtn");
   const soundBtn = document.getElementById("soundBtn");
   const resetBtn = document.getElementById("resetBtn");
 
-  const qText = document.getElementById("qText");
-  const subText = document.getElementById("subText");
+  const bgm = document.getElementById("bgm");
 
-  const promise = document.getElementById("promise");
-  const copyBtn = document.getElementById("copyBtn");
-  const backBtn = document.getElementById("backBtn");
+  // Mascot
+  const owl = document.getElementById("owl");
+  const bubble = document.getElementById("bubble");
 
-  let soundOn = true;
-  let yesScale = 1;
+  // ===== State =====
   let tries = 0;
+  let yesScale = 1;
+  let soundOn = true;
+  let musicOn = true;
+
+  // emoji “frames” to simulate GIF (blink / excited / angry)
+  const owlFramesIdle = ["🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉"];
+  const owlFramesBlink = ["🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉"];
+  const owlFramesHappy = ["🧑‍🎓🦉✨", "🧑‍🎓🦉✅", "🧑‍🎓🦉🏆", "🧑‍🎓🦉✨"];
+  const owlFramesNope  = ["🧑‍🎓🦉😏", "🧑‍🎓🦉😈", "🧑‍🎓🦉😆", "🧑‍🎓🦉😏"];
 
   const messages = [
     "តើអ្នកប្រាកដទេ? 🤔",
@@ -361,19 +447,24 @@
     "បើមិនសិក្សា… ក៏ចាញ់ Quiz 😭"
   ];
 
+  // ===== UI helpers =====
   function showToast(text){
     toast.textContent = text;
     toast.classList.add("show");
     setTimeout(()=> toast.classList.remove("show"), 1200);
   }
 
-  // ===== Funny sound (WebAudio) =====
+  function showBubble(text, ms=1100){
+    bubble.textContent = text;
+    bubble.classList.add("show");
+    setTimeout(()=> bubble.classList.remove("show"), ms);
+  }
+
+  // ===== Fun beep "hehe nope!" =====
   function playHehe(){
     if(!soundOn) return;
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioCtx();
-
-    // 3 short beeps like "hehe nope!"
     const now = ctx.currentTime;
 
     function beep(t, freq){
@@ -381,16 +472,11 @@
       const g = ctx.createGain();
       o.type = "square";
       o.frequency.value = freq;
-
       g.gain.setValueAtTime(0.0001, t);
       g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start(t);
-      o.stop(t + 0.13);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t); o.stop(t + 0.14);
     }
 
     beep(now + 0.00, 640);
@@ -404,32 +490,49 @@
   function moveNoButton(){
     const stageRect = stage.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
-
-    // limit area inside stage
     const padding = 18;
+
     const maxX = stageRect.width - btnRect.width - padding;
     const maxY = stageRect.height - btnRect.height - padding;
 
-    // random positions
     const x = Math.max(padding, Math.random() * maxX);
     const y = Math.max(padding, Math.random() * maxY);
 
-    // convert to stage relative positioning
     noBtn.style.position = "absolute";
     noBtn.style.left = x + "px";
     noBtn.style.top  = y + "px";
   }
 
-  function levelUpYesButton(){
-    yesScale = Math.min(2.25, yesScale + 0.12);
+  function levelUpYes(){
+    yesScale = Math.min(2.35, yesScale + 0.12);
     yesBtn.style.transform = `scale(${yesScale})`;
   }
 
-  function updateTexts(){
+  function updateText(){
     const msg = messages[Math.min(messages.length - 1, tries)];
     qText.textContent = msg;
     subText.textContent = "ចុច “សិក្សាឥឡូវនេះ” ម្តងទៅ 😄";
   }
+
+  // ===== Mascot animation helpers =====
+  function playFrames(frames, interval=120, total=900){
+    let i = 0;
+    const t = setInterval(()=>{
+      owl.textContent = frames[i % frames.length];
+      i++;
+    }, interval);
+    setTimeout(()=> clearInterval(t), total);
+  }
+
+  // Random blink loop (GIF-like)
+  setInterval(()=>{
+    // 20% chance blink
+    if(Math.random() < 0.20){
+      playFrames(owlFramesBlink, 90, 320);
+    } else {
+      owl.textContent = owlFramesIdle[0];
+    }
+  }, 900);
 
   // ===== Events =====
   function handleNo(){
@@ -437,42 +540,58 @@
     playHehe();
 
     showToast("ហេហេ! អត់បានទេ 😆");
+    showBubble("🦉: ហេហេ… NO រត់គេចហើយ!", 1200);
+
+    owl.classList.add("shock");
+    setTimeout(()=> owl.classList.remove("shock"), 700);
+
+    playFrames(owlFramesNope, 120, 900);
+
     moveNoButton();
-    levelUpYesButton();
-    updateTexts();
+    levelUpYes();
+    updateText();
   }
 
-  // Use hover + click so it's hard to press NO
   noBtn.addEventListener("mouseenter", handleNo);
   noBtn.addEventListener("click", handleNo);
 
   yesBtn.addEventListener("click", ()=>{
-    // Show result overlay
-    overlay.classList.add("show");
-    showToast("🎉 សិក្សាចាប់ផ្តើម!");
+    showToast("🎉 ពូកែមែន! កំពុងទៅ Study Letter...");
+    showBubble("🦉: ពូកែមែន! ចាប់ផ្តើមសិក្សា! 🏆", 1200);
+
+    owl.classList.add("talk");
+    playFrames(owlFramesHappy, 120, 900);
+    setTimeout(()=> owl.classList.remove("talk"), 900);
+
+    localStorage.setItem("study_yes_clicks", String((Number(localStorage.getItem("study_yes_clicks")||"0")+1)));
+
+    setTimeout(()=>{
+      window.location.href = "letter.html";
+    }, 650);
   });
 
-  backBtn.addEventListener("click", ()=>{
-    overlay.classList.remove("show");
-  });
-
-  copyBtn.addEventListener("click", async ()=>{
-    const text = promise.value.trim() || "ខ្ញុំនឹងសិក្សា 15 នាទី មុនលេងទូរស័ព្ទ។";
-    try{
-      await navigator.clipboard.writeText(text);
-      showToast("📋 ចម្លងរួចរាល់!");
-    }catch(e){
-      // fallback
-      promise.select();
-      document.execCommand("copy");
-      showToast("📋 ចម្លងរួចរាល់!");
-    }
-  });
-
+  // Toggle sound
   soundBtn.addEventListener("click", ()=>{
     soundOn = !soundOn;
     soundBtn.textContent = soundOn ? "🔊 សម្លេង: ON" : "🔇 សម្លេង: OFF";
     showToast(soundOn ? "សម្លេងបានបើក" : "សម្លេងបានបិទ");
+  });
+
+  // Toggle music
+  async function ensureAutoplay(){
+    try{ await bgm.play(); }catch(e){}
+  }
+  musicBtn.addEventListener("click", async ()=>{
+    musicOn = !musicOn;
+    if(musicOn){
+      await ensureAutoplay();
+      musicBtn.textContent = "🎵 តន្ត្រី: ON";
+      showToast("តន្ត្រីបានបើក");
+    }else{
+      bgm.pause();
+      musicBtn.textContent = "🎵 តន្ត្រី: OFF";
+      showToast("តន្ត្រីបានបិទ");
+    }
   });
 
   function resetAll(){
@@ -484,43 +603,33 @@
     noBtn.style.top  = "auto";
     qText.textContent = "ជ្រើសរើសមួយ 👇";
     subText.textContent = "ព្យាយាមចុច “អត់សិក្សា” មើល 😏";
-    promise.value = "";
-    overlay.classList.remove("show");
+    owl.textContent = "🧑‍🎓🦉";
+    showBubble("🦉: សួស្តី! ចុច YES ទៅ 😄", 1000);
     showToast("🔄 Reset រួចរាល់!");
   }
-
   resetBtn.addEventListener("click", resetAll);
 
-  // ===== Floating icons =====
-  const floatLayer = document.getElementById("float");
-  const icons = ["📚","✏️","🧠","📝","⏳","💡","📖","✅","🎯","🧩"];
+  // Floating icons
+  const floatLayer = document.getElementById("floatLayer");
+  const icons = ["📚","✏️","🧠","📝","⏳","💡","📖","✅","🎯","🧩","📌","🏆"];
 
-  function spawnBubble(){
-    const b = document.createElement("div");
-    b.className = "bubble";
-    b.textContent = icons[Math.floor(Math.random()*icons.length)];
-
+  function spawnFloat(){
+    const e = document.createElement("div");
+    e.className = "floatItem";
+    e.textContent = icons[Math.floor(Math.random()*icons.length)];
     const left = Math.random() * 100;
     const duration = 6 + Math.random() * 7;
-    const size = 18 + Math.random() * 18;
-
-    b.style.left = left + "vw";
-    b.style.animationDuration = duration + "s";
-    b.style.fontSize = size + "px";
-    b.style.top = "0";
-
-    floatLayer.appendChild(b);
-    setTimeout(()=> b.remove(), (duration*1000) + 200);
+    const size = 18 + Math.random() * 20;
+    e.style.left = left + "vw";
+    e.style.animationDuration = duration + "s";
+    e.style.fontSize = size + "px";
+    floatLayer.appendChild(e);
+    setTimeout(()=> e.remove(), duration*1000 + 200);
   }
+  setInterval(spawnFloat, 360);
 
-  setInterval(spawnBubble, 380);
-
-  // initial position
-  setTimeout(()=> {
-    moveNoButton();
-    // put it back centered first then random after a second
-    resetAll();
-  }, 100);
+  // Start
+  resetAll();
 </script>
 </body>
 </html>

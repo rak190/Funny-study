@@ -111,7 +111,7 @@ button{
 <div class="floating" id="floatingLayer"></div>
 
 <div class="card">
-  <h1 id="questionText">Do You Want To Study? 📚😏</h1>
+  <h1 id="questionText">តើអ្នកចង់រៀនដែរឬទេ? 📚😏</h1>
 
   <!-- Funny Study Bear (Direct Giphy Link) -->
   <img
@@ -127,7 +127,7 @@ button{
   </div>
 
   <div class="message" id="finalMessage">
-    Good student! Let’s study! 💪📚🔥
+    សិស្សល្អ! Let’s study! 💪📚🔥
   </div>
 </div>
 
@@ -148,10 +148,10 @@ const growStep = 0.15;
 const minScale = 0.3;
 
 const texts = [
-  "Are you sure? 🤨",
-  "Homework is waiting 😏",
-  "Exam is coming 😈",
-  "No escape from study! 📚🔥"
+  "តើប្អូនច្បាស់ទេ? 🤨",
+  "កិច្ចការផ្ទះកំពុងរង់ចាំ 😏",
+  "ប្រលងទើបតែបានពិន្ទុតិច 😈",
+  "គ្មានផ្លូវអាចអត់រៀនបានទេ! 📚🔥"
 ];
 
 function moveNo(){
@@ -159,7 +159,7 @@ function moveNo(){
   if(attempt < texts.length){
     questionText.textContent = texts[attempt];
   } else {
-    questionText.textContent = "Press YES or face exam! 😆";
+    questionText.textContent = "ចុច YES ឬ ចង់ឱ្យដកពិន្ទុ! 😆";
   }
   attempt++;
 

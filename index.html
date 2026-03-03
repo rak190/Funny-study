@@ -18,7 +18,7 @@ body{
   padding:14px;
 }
 
-/* Floating books */
+/* Floating school icons */
 .floating{
   position:fixed;
   inset:0;
@@ -59,7 +59,7 @@ h1{
 .bear{
   display:block;
   margin:10px auto 8px;
-  width:min(220px,65vw);
+  width:min(240px,70vw);
   animation:bounce 2s infinite ease-in-out;
 }
 @keyframes bounce{
@@ -72,6 +72,7 @@ h1{
   justify-content:center;
   gap:15px;
   margin-top:10px;
+  flex-wrap:wrap;
 }
 
 button{
@@ -110,14 +111,14 @@ button{
 <div class="floating" id="floatingLayer"></div>
 
 <div class="card">
-  <h1 id="questionText">តើអ្នកចង់រៀនដែរឬទេ? 📚😏</h1>
+  <h1 id="questionText">Do You Want To Study? 📚😏</h1>
 
-  <!-- Funny Study Bear GIF -->
+  <!-- Funny Study Bear (Direct Giphy Link) -->
   <img
     id="bearImage"
     class="bear"
     src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif"
-    alt="Study bear">
+    alt="Study bear"
   />
 
   <div class="buttonRow">
@@ -202,31 +203,31 @@ yesBtn.addEventListener("click",()=>{
   noBtn.style.display="none";
   yesBtn.style.display="none";
 
-  // Change to celebration study GIF
+  // Celebration GIF (Direct Giphy Link)
   bearImage.src = "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif";
 
   burstIcons();
 });
 
-/* Floating books */
-const floatingLayer=document.getElementById("floatingLayer");
-const icons=["📚","✏️","📝","🎓","📖"];
+/* Floating school icons */
+const floatingLayer = document.getElementById("floatingLayer");
+const icons = ["📚","✏️","📝","🎓","📖"];
 
 function spawnIcon(){
-  const icon=document.createElement("div");
-  icon.className="icon";
-  icon.textContent=icons[Math.floor(Math.random()*icons.length)];
-  icon.style.left=Math.random()*100+"vw";
-  icon.style.animationDuration=(3+Math.random()*3)+"s";
+  const icon = document.createElement("div");
+  icon.className = "icon";
+  icon.textContent = icons[Math.floor(Math.random()*icons.length)];
+  icon.style.left = Math.random()*100 + "vw";
+  icon.style.animationDuration = (3 + Math.random()*3) + "s";
   floatingLayer.appendChild(icon);
-  setTimeout(()=>icon.remove(),6000);
+  setTimeout(()=>icon.remove(), 6500);
 }
 
-setInterval(spawnIcon,500);
+setInterval(spawnIcon, 500);
 
 function burstIcons(){
   for(let i=0;i<25;i++){
-    setTimeout(spawnIcon,i*60);
+    setTimeout(spawnIcon, i*60);
   }
 }
 </script>

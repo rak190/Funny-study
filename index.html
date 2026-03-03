@@ -1,635 +1,235 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>តើអ្នកសិក្សាឥឡូវនេះទេ? 📚</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do You Want To Study? 📚</title>
 
-  <style>
-    :root{
-      --glass: rgba(255,255,255,0.12);
-      --border: rgba(255,255,255,0.20);
-      --text: #f5fbff;
-      --muted: rgba(245,251,255,0.78);
-      --shadow: rgba(0,0,0,0.45);
-      --yes1: rgba(86,255,170,0.95);
-      --yes2: rgba(52,184,255,0.95);
-      --no: rgba(255, 90, 90, 0.86);
-    }
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#74ebd5,#9face6);
+  font-family:Arial, sans-serif;
+  overflow:hidden;
+  padding:14px;
+}
 
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      color: var(--text);
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Khmer", "Khmer OS", sans-serif;
-      background: radial-gradient(circle at top, #2a4a78, #0b0f18);
-    }
+/* Floating books */
+.floating{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:1;
+}
+.icon{
+  position:absolute;
+  bottom:-40px;
+  font-size:22px;
+  animation:floatUp linear forwards;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0);opacity:0;}
+  10%{opacity:1;}
+  100%{transform:translateY(-120vh);opacity:0;}
+}
 
-    /* Floating study assets */
-    .floatLayer{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      overflow:hidden;
-    }
-    .floatItem{
-      position:absolute;
-      opacity:0.85;
-      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
-      animation: rise linear infinite;
-      user-select:none;
-    }
-    @keyframes rise{
-      from{ transform: translateY(110vh) rotate(0deg); opacity:0; }
-      12%{ opacity:0.9; }
-      to{ transform: translateY(-20vh) rotate(360deg); opacity:0; }
-    }
+.card{
+  background:white;
+  padding:25px;
+  border-radius:20px;
+  text-align:center;
+  width:min(90vw,420px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  position:relative;
+  z-index:2;
+}
 
-    .card{
-      width:min(950px, 92vw);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: 0 28px 90px var(--shadow);
-      padding: 24px 22px;
-      backdrop-filter: blur(10px);
-      position:relative;
-    }
+h1{
+  color:#333;
+  font-size:22px;
+  margin:10px 0;
+  transition:0.3s;
+}
 
-    .topRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
+.bear{
+  display:block;
+  margin:10px auto 8px;
+  width:min(220px,65vw);
+  animation:bounce 2s infinite ease-in-out;
+}
+@keyframes bounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
 
-    .badge{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.22);
-      background: rgba(0,0,0,0.18);
-      font-weight: 900;
-      letter-spacing: 0.2px;
-    }
+.buttonRow{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-top:10px;
+}
 
-    .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
 
-    .miniBtn{
-      cursor:pointer;
-      border:none;
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.10);
-      color: rgba(245,251,255,0.92);
-      border: 1px solid rgba(255,255,255,0.18);
-      font-weight: 900;
-      box-shadow:none;
-    }
-    .miniBtn:hover{ filter: brightness(1.08); }
+#yesBtn{
+  background:#4CAF50;
+  color:white;
+}
 
-    h1{
-      margin: 14px 0 8px 0;
-      font-size: clamp(26px, 3.8vw, 42px);
-      line-height: 1.15;
-    }
-    p{
-      margin: 8px 0;
-      color: var(--muted);
-      font-size: clamp(14px, 2.1vw, 16px);
-      line-height: 1.65;
-    }
+#noBtn{
+  background:#f44336;
+  color:white;
+  user-select:none;
+}
 
-    .layout{
-      display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 14px;
-      margin-top: 16px;
-      align-items: stretch;
-    }
-    @media (max-width: 920px){
-      .layout{ grid-template-columns: 1fr; }
-    }
-
-    .stage{
-      padding: 18px;
-      border-radius: 18px;
-      background: rgba(0,0,0,0.22);
-      border: 1px dashed rgba(255,255,255,0.25);
-      position:relative;
-      overflow:hidden;
-      min-height: 290px;
-    }
-
-    .question{
-      text-align:center;
-      font-size: clamp(18px, 2.8vw, 24px);
-      font-weight: 950;
-      margin: 6px 0 6px 0;
-    }
-    .sub{
-      text-align:center;
-      margin: 0 0 14px 0;
-      color: rgba(245,251,255,0.82);
-      font-size: 14px;
-    }
-
-    .btnArea{
-      position:relative;
-      height: 160px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-
-    button.main{
-      border:none;
-      border-radius: 16px;
-      padding: 14px 18px;
-      font-size: 16px;
-      font-weight: 950;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, filter .12s ease;
-      box-shadow: 0 18px 35px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.18);
-      position: relative;
-      will-change: transform;
-    }
-    button.main:active{ transform: scale(0.98); }
-
-    #yesBtn{
-      background: linear-gradient(135deg, var(--yes1), var(--yes2));
-      color: #072017;
-    }
-    #noBtn{
-      background: var(--no);
-      color: #fff;
-    }
-
-    .hintRow{
-      margin-top: 10px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:space-between;
-      align-items:center;
-      color: rgba(245,251,255,0.86);
-      font-size: 13px;
-    }
-
-    .toast{
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.58);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(245,251,255,0.95);
-      padding: 10px 14px;
-      border-radius: 14px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-      opacity: 0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
-      font-size: 14px;
-      max-width: min(92vw, 820px);
-      text-align:center;
-      z-index: 9999;
-    }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(-6px);
-    }
-
-    /* ===== Owl Tutor Mascot (emoji animation “GIF-like”) ===== */
-    .mascotCard{
-      background: rgba(0,0,0,0.22);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 18px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      min-height: 290px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-    }
-
-    .mascotHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .mascotTitle{
-      font-weight: 950;
-      letter-spacing: 0.2px;
-      opacity: 0.95;
-    }
-    .mascotTag{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      font-weight: 900;
-      font-size: 13px;
-      opacity:0.95;
-    }
-
-    .owlStage{
-      margin-top: 12px;
-      border-radius: 18px;
-      border: 1px dashed rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.22);
-      min-height: 170px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .owl{
-      font-size: 80px;
-      line-height: 1;
-      user-select:none;
-      filter: drop-shadow(0 18px 30px rgba(0,0,0,0.35));
-      transform-origin: 50% 80%;
-      animation: owlIdle 1.35s ease-in-out infinite;
-    }
-    @keyframes owlIdle{
-      0%,100%{ transform: translateY(0) rotate(-1deg); }
-      50%{ transform: translateY(-6px) rotate(1deg); }
-    }
-    .owl.talk{
-      animation: owlTalk 0.22s ease-in-out infinite;
-    }
-    @keyframes owlTalk{
-      0%,100%{ transform: translateY(0) scale(1.02); }
-      50%{ transform: translateY(-4px) scale(1.06); }
-    }
-    .owl.shock{
-      animation: owlShock 0.12s ease-in-out 8;
-    }
-    @keyframes owlShock{
-      0%,100%{ transform: translateX(0); }
-      25%{ transform: translateX(-3px); }
-      75%{ transform: translateX(3px); }
-    }
-
-    .bubble{
-      position:absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      margin:auto;
-      width: fit-content;
-      max-width: calc(100% - 24px);
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.20);
-      padding: 10px 12px;
-      border-radius: 16px;
-      font-weight: 900;
-      font-size: 13px;
-      color: rgba(245,251,255,0.95);
-      box-shadow: 0 18px 35px rgba(0,0,0,0.28);
-      text-align:center;
-      opacity: 0;
-      transform: translateY(-6px);
-      transition: opacity .18s ease, transform .18s ease;
-      pointer-events:none;
-    }
-    .bubble.show{
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .mascotFooter{
-      margin-top: 12px;
-      color: rgba(245,251,255,0.85);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .kbd{
-      display:inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.18);
-      font-weight: 950;
-      margin: 2px 4px 2px 0;
-    }
-  </style>
+.message{
+  display:none;
+  font-size:20px;
+  color:#4CAF50;
+  font-weight:bold;
+  margin-top:12px;
+}
+</style>
 </head>
 
 <body>
-  <div class="floatLayer" id="floatLayer"></div>
 
-  <div class="card">
-    <div class="topRow">
-      <div class="badge">📚 Study Challenge Mode</div>
-      <div class="controls">
-        <button class="miniBtn" id="musicBtn">🎵 តន្ត្រី: ON</button>
-        <button class="miniBtn" id="soundBtn">🔊 សម្លេង: ON</button>
-        <button class="miniBtn" id="resetBtn">🔄 Reset</button>
-      </div>
-    </div>
+<div class="floating" id="floatingLayer"></div>
 
-    <h1>តើអ្នកសិក្សាឥឡូវនេះទេ? 🤨</h1>
-    <p>
-      បែបដូច Valentine project: <b>NO</b> រត់គេច 😆, <b>YES</b> ធំឡើងៗ ✅
-      ហើយមាន “គ្រូព្រាបព្រឹក” 🧑‍🎓🦉 ណែនាំសិស្ស!
-    </p>
+<div class="card">
+  <h1 id="questionText">Do You Want To Study? 📚😏</h1>
 
-    <div class="layout">
-      <!-- Left: Main interaction -->
-      <div class="stage" id="stage">
-        <div class="question" id="qText">ជ្រើសរើសមួយ 👇</div>
-        <div class="sub" id="subText">ព្យាយាមចុច “អត់សិក្សា” មើល 😏</div>
+  <!-- Funny Study Bear GIF -->
+  <img
+    id="bearImage"
+    class="bear"
+    src="https://media.tenor.com/2uyENRmiUt0AAAAi/bear-reading-book.gif"
+    alt="Study bear"
+  />
 
-        <div class="btnArea">
-          <button class="main" id="yesBtn">សិក្សាឥឡូវនេះ ✅</button>
-          <button class="main" id="noBtn">អត់សិក្សា ❌</button>
-        </div>
-
-        <div class="hintRow">
-          <div>🎯 ចុច NO → YES ធំឡើងៗ (motivation) 😆</div>
-          <div>📌 ចុច YES → ទៅ Study Letter</div>
-        </div>
-      </div>
-
-      <!-- Right: Mascot -->
-      <div class="mascotCard">
-        <div class="mascotHeader">
-          <div class="mascotTitle">🧑‍🎓🦉 Owl Tutor</div>
-          <div class="mascotTag">✅ Study Coach</div>
-        </div>
-
-        <div class="owlStage">
-          <div class="bubble" id="bubble">សួស្តី! ចុច “សិក្សាឥឡូវនេះ” ទៅ 😄</div>
-          <div class="owl" id="owl">🧑‍🎓🦉</div>
-        </div>
-
-        <div class="mascotFooter">
-          <div>🧠 Mascot នឹងប្តូរអារម្មណ៍តាមសកម្មភាព:</div>
-          <div>
-            <span class="kbd">NO</span> → “ហេហេ!” 😆 |
-            <span class="kbd">YES</span> → “ពូកែមែន!” 🏆
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="buttonRow">
+    <button id="yesBtn">YES 📖</button>
+    <button id="noBtn">NO 😴</button>
   </div>
 
-  <div class="toast" id="toast"></div>
-
-  <!-- Background music (optional): put study-music.mp3 in same folder -->
-  <audio id="bgm" loop autoplay>
-    <source src="study-music.mp3" type="audio/mpeg">
-  </audio>
+  <div class="message" id="finalMessage">
+    Good student! Let’s study! 💪📚🔥
+  </div>
+</div>
 
 <script>
-  // ===== Elements =====
-  const stage = document.getElementById("stage");
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn  = document.getElementById("noBtn");
-  const qText = document.getElementById("qText");
-  const subText = document.getElementById("subText");
-  const toast = document.getElementById("toast");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const questionText = document.getElementById("questionText");
+const finalMessage = document.getElementById("finalMessage");
+const bearImage = document.getElementById("bearImage");
 
-  const musicBtn = document.getElementById("musicBtn");
-  const soundBtn = document.getElementById("soundBtn");
-  const resetBtn = document.getElementById("resetBtn");
+let noScale = 1;
+let yesScale = 1;
+let activated = false;
+let attempt = 0;
 
-  const bgm = document.getElementById("bgm");
+const shrinkStep = 0.12;
+const growStep = 0.15;
+const minScale = 0.3;
 
-  // Mascot
-  const owl = document.getElementById("owl");
-  const bubble = document.getElementById("bubble");
+const texts = [
+  "Are you sure? 🤨",
+  "Homework is waiting 😏",
+  "Exam is coming 😈",
+  "No escape from study! 📚🔥"
+];
 
-  // ===== State =====
-  let tries = 0;
-  let yesScale = 1;
-  let soundOn = true;
-  let musicOn = true;
+function moveNo(){
 
-  // emoji “frames” to simulate GIF (blink / excited / angry)
-  const owlFramesIdle = ["🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉"];
-  const owlFramesBlink = ["🧑‍🎓🦉", "🧑‍🎓🦉", "🧑‍🎓🦉"];
-  const owlFramesHappy = ["🧑‍🎓🦉✨", "🧑‍🎓🦉✅", "🧑‍🎓🦉🏆", "🧑‍🎓🦉✨"];
-  const owlFramesNope  = ["🧑‍🎓🦉😏", "🧑‍🎓🦉😈", "🧑‍🎓🦉😆", "🧑‍🎓🦉😏"];
+  if(attempt < texts.length){
+    questionText.textContent = texts[attempt];
+  } else {
+    questionText.textContent = "Press YES or face exam! 😆";
+  }
+  attempt++;
 
-  const messages = [
-    "តើអ្នកប្រាកដទេ? 🤔",
-    "ប្រាកដមែនទេ? 😏",
-    "ឱកាសចុងក្រោយ! 😆",
-    "អត់អាចគេចបានទេ 😈",
-    "គ្រូកំពុងមើល! 👀",
-    "សិក្សា 10 នាទី ក៏ល្អហើយ! ⏳",
-    "បើមិនសិក្សា… ក៏ចាញ់ Quiz 😭"
-  ];
+  yesScale += growStep;
+  yesBtn.style.transform = `scale(${yesScale})`;
 
-  // ===== UI helpers =====
-  function showToast(text){
-    toast.textContent = text;
-    toast.classList.add("show");
-    setTimeout(()=> toast.classList.remove("show"), 1200);
+  if(!activated){
+    activated = true;
+    const rect = noBtn.getBoundingClientRect();
+    noBtn.style.position = "fixed";
+    noBtn.style.left = rect.left + "px";
+    noBtn.style.top  = rect.top + "px";
   }
 
-  function showBubble(text, ms=1100){
-    bubble.textContent = text;
-    bubble.classList.add("show");
-    setTimeout(()=> bubble.classList.remove("show"), ms);
+  noScale = Math.max(minScale, noScale - shrinkStep);
+  noBtn.style.transform = `scale(${noScale})`;
+
+  const rect = noBtn.getBoundingClientRect();
+  const pad = 10;
+
+  const maxX = window.innerWidth - rect.width - pad;
+  const maxY = window.innerHeight - rect.height - pad;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+}
+
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", (e)=>{ e.preventDefault(); moveNo(); });
+noBtn.addEventListener("touchstart",(e)=>{
+  e.preventDefault();
+  moveNo();
+},{passive:false});
+
+yesBtn.addEventListener("click",()=>{
+  questionText.textContent = "Excellent Choice! 🎓✨";
+  finalMessage.style.display="block";
+  noBtn.style.display="none";
+  yesBtn.style.display="none";
+
+  // Change to celebration study GIF
+  bearImage.src = "https://media.tenor.com/5bYyZ0XqK5AAAAAi/happy-bear.gif";
+
+  burstIcons();
+});
+
+/* Floating books */
+const floatingLayer=document.getElementById("floatingLayer");
+const icons=["📚","✏️","📝","🎓","📖"];
+
+function spawnIcon(){
+  const icon=document.createElement("div");
+  icon.className="icon";
+  icon.textContent=icons[Math.floor(Math.random()*icons.length)];
+  icon.style.left=Math.random()*100+"vw";
+  icon.style.animationDuration=(3+Math.random()*3)+"s";
+  floatingLayer.appendChild(icon);
+  setTimeout(()=>icon.remove(),6000);
+}
+
+setInterval(spawnIcon,500);
+
+function burstIcons(){
+  for(let i=0;i<25;i++){
+    setTimeout(spawnIcon,i*60);
   }
-
-  // ===== Fun beep "hehe nope!" =====
-  function playHehe(){
-    if(!soundOn) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioCtx();
-    const now = ctx.currentTime;
-
-    function beep(t, freq){
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "square";
-      o.frequency.value = freq;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
-      o.connect(g); g.connect(ctx.destination);
-      o.start(t); o.stop(t + 0.14);
-    }
-
-    beep(now + 0.00, 640);
-    beep(now + 0.16, 520);
-    beep(now + 0.32, 700);
-
-    setTimeout(()=> ctx.close(), 700);
-  }
-
-  // ===== NO button runs away =====
-  function moveNoButton(){
-    const stageRect = stage.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
-    const padding = 18;
-
-    const maxX = stageRect.width - btnRect.width - padding;
-    const maxY = stageRect.height - btnRect.height - padding;
-
-    const x = Math.max(padding, Math.random() * maxX);
-    const y = Math.max(padding, Math.random() * maxY);
-
-    noBtn.style.position = "absolute";
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
-  }
-
-  function levelUpYes(){
-    yesScale = Math.min(2.35, yesScale + 0.12);
-    yesBtn.style.transform = `scale(${yesScale})`;
-  }
-
-  function updateText(){
-    const msg = messages[Math.min(messages.length - 1, tries)];
-    qText.textContent = msg;
-    subText.textContent = "ចុច “សិក្សាឥឡូវនេះ” ម្តងទៅ 😄";
-  }
-
-  // ===== Mascot animation helpers =====
-  function playFrames(frames, interval=120, total=900){
-    let i = 0;
-    const t = setInterval(()=>{
-      owl.textContent = frames[i % frames.length];
-      i++;
-    }, interval);
-    setTimeout(()=> clearInterval(t), total);
-  }
-
-  // Random blink loop (GIF-like)
-  setInterval(()=>{
-    // 20% chance blink
-    if(Math.random() < 0.20){
-      playFrames(owlFramesBlink, 90, 320);
-    } else {
-      owl.textContent = owlFramesIdle[0];
-    }
-  }, 900);
-
-  // ===== Events =====
-  function handleNo(){
-    tries++;
-    playHehe();
-
-    showToast("ហេហេ! អត់បានទេ 😆");
-    showBubble("🦉: ហេហេ… NO រត់គេចហើយ!", 1200);
-
-    owl.classList.add("shock");
-    setTimeout(()=> owl.classList.remove("shock"), 700);
-
-    playFrames(owlFramesNope, 120, 900);
-
-    moveNoButton();
-    levelUpYes();
-    updateText();
-  }
-
-  noBtn.addEventListener("mouseenter", handleNo);
-  noBtn.addEventListener("click", handleNo);
-
-  yesBtn.addEventListener("click", ()=>{
-    showToast("🎉 ពូកែមែន! កំពុងទៅ Study Letter...");
-    showBubble("🦉: ពូកែមែន! ចាប់ផ្តើមសិក្សា! 🏆", 1200);
-
-    owl.classList.add("talk");
-    playFrames(owlFramesHappy, 120, 900);
-    setTimeout(()=> owl.classList.remove("talk"), 900);
-
-    localStorage.setItem("study_yes_clicks", String((Number(localStorage.getItem("study_yes_clicks")||"0")+1)));
-
-    setTimeout(()=>{
-      window.location.href = "letter.html";
-    }, 650);
-  });
-
-  // Toggle sound
-  soundBtn.addEventListener("click", ()=>{
-    soundOn = !soundOn;
-    soundBtn.textContent = soundOn ? "🔊 សម្លេង: ON" : "🔇 សម្លេង: OFF";
-    showToast(soundOn ? "សម្លេងបានបើក" : "សម្លេងបានបិទ");
-  });
-
-  // Toggle music
-  async function ensureAutoplay(){
-    try{ await bgm.play(); }catch(e){}
-  }
-  musicBtn.addEventListener("click", async ()=>{
-    musicOn = !musicOn;
-    if(musicOn){
-      await ensureAutoplay();
-      musicBtn.textContent = "🎵 តន្ត្រី: ON";
-      showToast("តន្ត្រីបានបើក");
-    }else{
-      bgm.pause();
-      musicBtn.textContent = "🎵 តន្ត្រី: OFF";
-      showToast("តន្ត្រីបានបិទ");
-    }
-  });
-
-  function resetAll(){
-    tries = 0;
-    yesScale = 1;
-    yesBtn.style.transform = "scale(1)";
-    noBtn.style.position = "relative";
-    noBtn.style.left = "auto";
-    noBtn.style.top  = "auto";
-    qText.textContent = "ជ្រើសរើសមួយ 👇";
-    subText.textContent = "ព្យាយាមចុច “អត់សិក្សា” មើល 😏";
-    owl.textContent = "🧑‍🎓🦉";
-    showBubble("🦉: សួស្តី! ចុច YES ទៅ 😄", 1000);
-    showToast("🔄 Reset រួចរាល់!");
-  }
-  resetBtn.addEventListener("click", resetAll);
-
-  // Floating icons
-  const floatLayer = document.getElementById("floatLayer");
-  const icons = ["📚","✏️","🧠","📝","⏳","💡","📖","✅","🎯","🧩","📌","🏆"];
-
-  function spawnFloat(){
-    const e = document.createElement("div");
-    e.className = "floatItem";
-    e.textContent = icons[Math.floor(Math.random()*icons.length)];
-    const left = Math.random() * 100;
-    const duration = 6 + Math.random() * 7;
-    const size = 18 + Math.random() * 20;
-    e.style.left = left + "vw";
-    e.style.animationDuration = duration + "s";
-    e.style.fontSize = size + "px";
-    floatLayer.appendChild(e);
-    setTimeout(()=> e.remove(), duration*1000 + 200);
-  }
-  setInterval(spawnFloat, 360);
-
-  // Start
-  resetAll();
+}
 </script>
+
 </body>
 </html>
